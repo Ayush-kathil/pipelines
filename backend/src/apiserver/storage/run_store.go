@@ -331,6 +331,10 @@ func (s *RunStore) ListRuns(
 	return runs[:opts.PageSize], totalSize, npt, err
 }
 
+// getRunListColumns dynamically builds the SELECT columns for ListRuns.
+// It explicitly restores PipelineRuntimeManifest to the projection when the client
+// sorts by runtime_details. This is required because keyset pagination needs the
+// value of the sorted field for the last row to generate the correct nextPageToken.
 func getRunListColumns(opts *list.Options) []string {
 	columns := make([]string, len(runListColumns))
 	copy(columns, runListColumns)
